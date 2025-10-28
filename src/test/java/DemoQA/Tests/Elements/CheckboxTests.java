@@ -4,7 +4,6 @@ import DemoQA.Helpers.ListInspector;
 import DemoQA.Helpers.ScreenshotOnFailureListener;
 import DemoQA.Tests.BaseTest;
 import DemoQA.data.Pages.CheckboxPage;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.testng.Assert;
@@ -30,9 +29,6 @@ public class CheckboxTests extends BaseTest {
 
     @Test
     public void checkBoxTest() {
-        WebElement checkBoxElement = getDriver().findElement(By.id("item-1"));
-        checkBoxElement.click();
-
         wait.until(ExpectedConditions.urlContains("/checkbox"));
         String checkBoxURL = getDriver().getCurrentUrl();
         Assert.assertNotNull(checkBoxURL);
