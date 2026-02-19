@@ -36,16 +36,20 @@ public class LogInTest extends BaseTest {
         wait.until(ExpectedConditions.visibilityOf(loginButton));
 
         loginNameField.clear();
-        loginNameField.sendKeys(loginPage.loginNameData);
+        loginNameField.sendKeys(LogInPage.loginNameData);
         loginPasswordField.clear();
         loginPasswordField.sendKeys(loginPage.loginPasswordData);
 
-        loginButton.click();
+        clickReliableBy(loginPage.loginButton);
 
         wait.until(ExpectedConditions.urlContains(profilePage.profileUrl));
         currentUrl = getDriver().getCurrentUrl();
         Assert.assertNotNull(currentUrl);
         Assert.assertTrue(currentUrl.contains(profilePage.profileUrl));
+
+        WebElement userNameLabel = wait.until(ExpectedConditions.visibilityOfElementLocated(profilePage.userNameLabel));
+
+        Assert.assertEquals(userNameLabel.getText(), LogInPage.loginNameData);
 
     }
 
