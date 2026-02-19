@@ -13,6 +13,7 @@ public class NewUserAPITest {
     private static JSONObject requestBody;
     private static String currentNewUserName;
     private static String currentNewUserID;
+    private static String token;
 
     @BeforeClass
     public void setUp() {
@@ -45,6 +46,22 @@ public class NewUserAPITest {
         System.out.println("!!! >>> CREATE RESPONSE: " + response.asString());
         System.out.println("!!! >>> EXTRACTED ID: " + currentNewUserID);
 
+        Response tokenResponse = given() // Generate token for the created user to be used in subsequent API calls
+                .contentType("application/json")
+                .body(requestBody.toString())
+                .when()
+                .post("https://demoqa.com/Account/v1/GenerateToken")
+                .then()
+                .statusCode(200)
+                .extract()
+                .response();
+
+        System.out.println("!!! >>> TOKEN RESPONSE: " + tokenResponse.asString());
+
+        token = tokenResponse.path("token");
+        org.testng.Assert.assertNotNull(token, "Token was not extracted");
+        System.out.println("!!! >>> TOKEN: " + token);
+
     }
 
     @Test(dependsOnMethods = "createNewUserTest")
@@ -53,6 +70,7 @@ public class NewUserAPITest {
         // Use the loginNameData from LogInPage to verify the user exists
         // Assert that the user exists (e.g., check response status code, response body, etc.)
         given()
+                .header("Authorization", "Bearer " + token) // Include the token in the header for authentication
                 .pathParam("uuid", currentNewUserID)
                 .when()
                 .get("https://demoqa.com/Account/v1/User/{uuid}")
@@ -66,6 +84,7 @@ public class NewUserAPITest {
         // Use the loginNameData from LogInPage to identify the user to be deleted
         // Assert that the user is deleted successfully (e.g., check response status code, response body, etc.)
         given()
+                .header("Authorization", "Bearer " + token) // Include the token in the header for authentication
                 .pathParam("uuid", currentNewUserID)
                 .when()
                 .delete("https://demoqa.com/Account/v1/User/{uuid}")
